@@ -41,7 +41,6 @@ use std::{
 
 use libc::{self, c_int, c_void};
 
-#[cfg(feature = "logging")]
 use crate::log;
 use crate::{
     consts::{genl::*, nl::*, socket::*},
@@ -483,7 +482,6 @@ impl NlSocketHandle {
         T: Nl + NlType + Debug,
         P: Nl + Debug,
     {
-        #[cfg(feature = "logging")]
         log!("Message sent:\n{:#?}", msg);
 
         if msg.nl_flags.contains(&NlmF::Ack) {
@@ -558,7 +556,6 @@ impl NlSocketHandle {
             })
             .map_err(NlError::new)?;
 
-        #[cfg(feature = "logging")]
         log!("Message received: {:#?}", packet);
 
         if let NlPayload::Err(e) = packet.nl_payload {
@@ -615,7 +612,6 @@ impl NlSocketHandle {
         let buffer = self.buffer.get_ref().expect("Caller borrows mutable self");
         let vec = NlBuffer::deserialize(&buffer.as_ref()[0..self.end]).map_err(NlError::new)?;
 
-        #[cfg(feature = "logging")]
         log!("Messages received: {:#?}", vec);
 
         self.position = 0;
